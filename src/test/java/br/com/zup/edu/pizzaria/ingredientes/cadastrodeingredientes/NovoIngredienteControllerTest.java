@@ -43,7 +43,21 @@ class NovoIngredienteControllerTest {
         mvc.perform(request)
            .andExpect(status().isCreated())
            .andExpect(header().exists("Location"))
-                .andExpect(redirectedUrlPattern("/api/ingredientes/\\d"));
+                .andExpect(redirectedUrlPattern("/api/ingredientes/*"));
+
+    }
+
+    @Test
+    void deveNãoCadastrarComNomeNulo() throws Exception {
+
+        NovoIngredienteRequest body = new NovoIngredienteRequest("", new BigDecimal("2.0"), 200);
+
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
 
     }
 }
