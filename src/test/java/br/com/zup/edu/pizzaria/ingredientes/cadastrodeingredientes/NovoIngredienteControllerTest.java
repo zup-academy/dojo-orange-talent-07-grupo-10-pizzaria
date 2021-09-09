@@ -48,7 +48,7 @@ class NovoIngredienteControllerTest {
     }
 
     @Test
-    void deveNãoCadastrarComNomeNulo() throws Exception {
+    void deveNaoCadastrarComNomeNulo() throws Exception {
 
         NovoIngredienteRequest body = new NovoIngredienteRequest("", new BigDecimal("2.0"), 200);
 
@@ -60,4 +60,67 @@ class NovoIngredienteControllerTest {
                 .andExpect(status().isBadRequest());
 
     }
+
+    @Test
+    void deveNaoCadastrarComNomeIgual() throws Exception {
+
+        NovoIngredienteRequest body = new NovoIngredienteRequest("Queijo muçarela", new BigDecimal("2.0"), 200);
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(redirectedUrlPattern("/api/ingredientes/*"));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void deveNaoCadastrarComPrecoZerado() throws Exception {
+        NovoIngredienteRequest body = new NovoIngredienteRequest("Queijo muçarela", new BigDecimal("0.0"), 200);
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveNaoCadastrarComPrecoNegativo() throws Exception {
+        NovoIngredienteRequest body = new NovoIngredienteRequest("Queijo muçarela", new BigDecimal("-5.0"), 200);
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveNaoCadastrarComQuantidadeZerada() throws Exception {
+        NovoIngredienteRequest body = new NovoIngredienteRequest("Queijo muçarela", new BigDecimal("200.0"), 0);
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveNaoCadastrarComQuantidadeNegativa() throws Exception {
+        NovoIngredienteRequest body = new NovoIngredienteRequest("Queijo muçarela", new BigDecimal("200.0"), -5);
+        MockHttpServletRequestBuilder request = post("/api/ingredientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(body));
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
+    }
+
 }
