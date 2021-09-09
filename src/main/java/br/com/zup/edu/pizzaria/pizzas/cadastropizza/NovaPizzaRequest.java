@@ -5,6 +5,7 @@ import br.com.zup.edu.pizzaria.ingredientes.IngredienteRepository;
 import br.com.zup.edu.pizzaria.pizzas.Pizza;
 import br.com.zup.edu.pizzaria.shared.validators.UniqueValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,10 +16,12 @@ import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 
 public class NovaPizzaRequest {
 
+    @JsonProperty
     @NotBlank
     @UniqueValue(domainAtribute = "sabor",domainClass = Pizza.class)
     private String sabor;
 
+    @JsonProperty
     @NotNull
     @Size(min = 1)
     private List<Long> ingredientes;
